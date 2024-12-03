@@ -4,16 +4,17 @@ import Button from '@/app/_coponents/Button';
 import Input from '@/app/_coponents/Input';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 function Page() {
-    const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const { data } = useSession();
 
-  console.log('session data from sign up', data);
+  // console.log('session data from sign up', data);
   useEffect(() => {
-    if (data) window.location.href = '/';
+    if (data) router.push('/')
   }, [data]);
   const [formData, setFormData] = useState({
     username: '',
@@ -26,7 +27,7 @@ function Page() {
   });
 
   const [errorMessage, setErrorMessage] = useState(null);
-
+const [success,setSuccess] = useState(false)
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -42,15 +43,21 @@ function Page() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
     if (formData.password !== formData.rePassword) {
       setErrorMessage('Passwords do not match');
       return;
     }
-    if (formData.password.length < 6 || !/[A-Z]/.test(formData.password) || !/\d/.test(formData.password)) {
-        setError('Password must be at least 6 characters, include an uppercase letter and a number.');
-        return;
-      }
+    if (
+      formData.password.length < 6 ||
+      !/[A-Z]/.test(formData.password) ||
+      !/\d/.test(formData.password)
+    ) {
+      setErrorMessage(
+        'Password must be at least 6 characters, include an uppercase letter and a number.'
+      );
+      return;
+    }
     try {
       // Call the backend API to create a new user
       const response = await fetch(
@@ -61,13 +68,15 @@ function Page() {
           body: JSON.stringify(formData),
         }
       );
+      console.log('response sign up', response);
+      setLoading(false);
 
-      setLoading(false)
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Signup failed');
-        
-    }
+      }else{
+        setSuccess(true)
+      }
     } catch (error) {
       setErrorMessage(error.message);
     }
@@ -114,17 +123,15 @@ function Page() {
           value={formData.rePassword}
         />
 
-        {errorMessage && <p className='text-red-500'>{errorMessage}</p>}
-
+        {errorMessage && !success && <p className='text-red-500'>{errorMessage}</p>}
+{success &&!errorMessage&& <p className=' text-green-600'>you are was sign up</p>}
         <div className='text-center'>
           <Link href='/auth/signin' className='text-[#122D9C]'>
             Already have an account?
           </Link>
         </div>
 
-        <Button>
-            {loading?'loading...':'sign up'}
-          </Button>
+        <Button>{loading ? 'loading...' : 'sign up'}</Button>
       </form>
     </div>
   );

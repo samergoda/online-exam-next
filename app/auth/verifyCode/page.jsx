@@ -1,6 +1,8 @@
 'use client';
+import Button from '@/app/_coponents/Button';
 import Input from '@/app/_coponents/Input';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 function Page() {
@@ -8,7 +10,7 @@ function Page() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-
+  const router = useRouter();
   const handleRecoverPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -31,7 +33,7 @@ function Page() {
       }
 
       setSuccessMessage('Code verified successfully!');
-      window.location.href='/auth/resetPassword'
+      router.push('/auth/resetPassword')
     } catch (error) {
       setErrorMessage(error.message);
     } finally {

@@ -1,10 +1,12 @@
-'use client';
+'use client'
 import { useState } from 'react';
 import Button from '@/app/_coponents/Button';
 import Input from '@/app/_coponents/Input';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-async function page() {
+function Page() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     oldPassword: '',
     password: '',
@@ -48,7 +50,7 @@ async function page() {
       }
 
       setSuccess('Password changed successfully!');
-      window.location.href ='/auth/login'
+      router.push('/auth/login'); 
     } catch (err) {
       setError(err.message);
     }
@@ -72,10 +74,6 @@ async function page() {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            validation={{
-              regex: /^(?=.*[A-Z])(?=.*\d).{6,}$/,
-              message: 'Password must be at least 6 characters, include an uppercase letter, and a number.',
-            }}
           />
           <Input
             type="password"
@@ -96,4 +94,4 @@ async function page() {
   );
 }
 
-export default page;
+export default Page;

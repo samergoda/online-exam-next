@@ -4,6 +4,7 @@ import Input from '@/app/_coponents/Input';
 
 import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 function Page() {
@@ -11,12 +12,12 @@ function Page() {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setloading] = useState(false);
-
+  const router = useRouter();
   const { data } = useSession();
 
   console.log('session data', data);
 
-  if (data) window.location.href = '/';
+  if (data)router.push('/')
 
   const handleSubmit = async (e) => {
     setloading(true);
@@ -31,7 +32,7 @@ function Page() {
       setErrorMessage(result.error);
       setloading(false);
     } else {
-      window.location.href = '/';
+      router.push('/')
     }
   };
 

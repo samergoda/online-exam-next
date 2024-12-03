@@ -39,7 +39,7 @@ function Page() {
       if (!response.ok) {
         throw new Error('Failed to send recovery email');
       }
-      window.location.href = '/auth/verifyCode';
+       router.push('/auth/verifyCode')
     } catch (error) {
       setErrorMessage(error.message);
       setLoading(false);
