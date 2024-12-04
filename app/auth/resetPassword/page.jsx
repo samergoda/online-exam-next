@@ -60,7 +60,7 @@ function Page() {
     <div>
       <h2 className="font-bold text-[25px] mb-[31px]">Reset Password</h2>
       <div className="flex flex-col gap-4">
-        <form onSubmit={handleResetPassword}>
+        <form onSubmit={handleResetPassword} className='flex flex-col gap-4'>
           <Input
             type="password"
             placeholder="Old Password"
@@ -84,7 +84,7 @@ function Page() {
           />
           <Button type="submit">Reset Password</Button>
         </form>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && <p className="text-red-500 text-sm max-w-[400px]">{error}</p>}
         {success && <p className="text-green-500 text-sm">{success}</p>}
         <div className="text-end">
           <Link href="/auth/forgetPassword">Recover Password</Link>

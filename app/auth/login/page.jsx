@@ -5,7 +5,7 @@ import Input from '@/app/_coponents/Input';
 import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function Page() {
   const [email, setEmail] = useState('');
@@ -15,9 +15,13 @@ function Page() {
   const router = useRouter();
   const { data } = useSession();
 
-  console.log('session data', data);
+  // console.log('session data', data);
 
-  if (data)router.push('/')
+  useEffect(() => {
+    if (data) {
+      router.push('/'); // Redirect if the user is already authenticated
+    }
+  }, [data, router]);
 
   const handleSubmit = async (e) => {
     setloading(true);

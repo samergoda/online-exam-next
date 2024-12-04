@@ -14,8 +14,8 @@ function Page() {
 
   // console.log('session data from sign up', data);
   useEffect(() => {
-    if (data) router.push('/')
-  }, [data]);
+    if (data) router.push('/');
+  }, [data, router]);
   const [formData, setFormData] = useState({
     username: '',
     firstName: '',
@@ -27,7 +27,7 @@ function Page() {
   });
 
   const [errorMessage, setErrorMessage] = useState(null);
-const [success,setSuccess] = useState(false)
+  const [success, setSuccess] = useState(false);
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -68,14 +68,14 @@ const [success,setSuccess] = useState(false)
           body: JSON.stringify(formData),
         }
       );
-      console.log('response sign up', response);
+      // console.log('response sign up', response);
       setLoading(false);
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Signup failed');
-      }else{
-        setSuccess(true)
+      } else {
+        setSuccess(true);
       }
     } catch (error) {
       setErrorMessage(error.message);
@@ -123,8 +123,12 @@ const [success,setSuccess] = useState(false)
           value={formData.rePassword}
         />
 
-        {errorMessage && !success && <p className='text-red-500'>{errorMessage}</p>}
-{success &&!errorMessage&& <p className=' text-green-600'>you are was sign up</p>}
+        {errorMessage && !success && (
+          <p className='text-red-500'>{errorMessage}</p>
+        )}
+        {success && !errorMessage && (
+          <p className=' text-green-600'>you are was sign up</p>
+        )}
         <div className='text-center'>
           <Link href='/auth/signin' className='text-[#122D9C]'>
             Already have an account?

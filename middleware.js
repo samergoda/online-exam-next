@@ -7,7 +7,7 @@ export default async function middleware(request) {
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
   });
-  console.log('token from middleware', nextToken);
+  // console.log('token from middleware', nextToken);
 
   // authnicate
   if (!token) return NextResponse.rewrite(new URL('/auth/login', request.url));

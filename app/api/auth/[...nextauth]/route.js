@@ -38,9 +38,9 @@ const handler = NextAuth({
         );
 
         const user = await response.json();
-
+console.log('user from credintials ',user)
         if (!response.ok || !user) {
-          throw new Error('Invalid your email');
+          throw new Error(user.message);
         }
         console.log('user', {token:user.token,...user.user});
 
