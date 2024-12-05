@@ -1,13 +1,23 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession ,getToken  } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 
 export default function Logout() {
-  const { data } = useSession();
-  const token = data?.token;
+  const {data} = useSession();
   const router = useRouter();
-  console.log('token', token);
+  const [token,setToken]=useState('')
+  useEffect(()=>{
+      if(data){
 
+          setToken(data.token)
+          console.log(token);
+        }
+      
+    //   console.log('token', token);
+
+  },[data, token])
+if(!data) return null
   async function handleLogout() {
     try {
       const response = await fetch(
@@ -24,18 +34,15 @@ export default function Logout() {
       console.log(result);
 
       if (!response.ok) {
-        throw new Error('Failed to logout. Please try again.');
+        throw new Error(result.message);
       }
 
-      console.log('Logout successful');
+    //   console.log('Logout successful');
       
       // Clear cookies
-      document.cookie = 'token=; Max-Age=0; Path=/; SameSite=Lax;'; // Clear specific token cookie
-      document.cookie = 'next-auth.session-token=; Max-Age=0; Path=/;'; // Clear NextAuth session cookie (if used)
+      document.cookie = 'token=; Max-Age=0; Path=/; SameSite=Lax;'; 
+      document.cookie = 'next-auth.session-token=; Max-Age=0; Path=/;';
       
-      // Sign out from NextAuth (clears session)
-      await signOut({ redirect: false });
-
       // Redirect to login page
       router.push('/auth/login');
     } catch (error) {

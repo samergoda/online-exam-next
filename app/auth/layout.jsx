@@ -20,7 +20,7 @@ function layout({ children }) {
         <Image alt='' width='600' height='700' src='/bro.png' />
       </div>
       <div className="max-w-[50%] m-auto">
-<nav>
+<nav className='mb-28'>
   <ul className='flex gap-8 justify-end'>
     <li><Link href='/auth/login' className=' font-bold text-[20px] text-[#4461F2]'>Sign in</Link></li>
     <li><Link href='/auth/signup' className='p-2 leading-6 rounded-[15px] border '>Register</Link></li>
