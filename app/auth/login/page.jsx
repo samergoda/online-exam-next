@@ -15,7 +15,7 @@ function Page() {
   const router = useRouter();
   const { data } = useSession();
 
-  // console.log('session data', data);
+  console.log('session data', data);
 
   useEffect(() => {
     if (data) {

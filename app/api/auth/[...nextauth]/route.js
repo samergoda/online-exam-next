@@ -3,7 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import FacebookProvider from 'next-auth/providers/facebook';
 import TwitterProvider from 'next-auth/providers/twitter';
-const handler = NextAuth({
+export const OPTIONS ={
   // pages: {
   //   signIn: '/auth/signup',
   // },
@@ -14,10 +14,10 @@ const handler = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       return { ...token, ...user };
-    },  
-    async session({ session, token }) {
-      console.log('token from route',token)
-      return { ...session, ...token };
+    },
+    async session({ session, token, user }) {
+      // console.log('token from route', token);
+      return { ...session, ...token, ...user };
     },
   },
   providers: [
@@ -39,11 +39,11 @@ const handler = NextAuth({
         );
 
         const user = await response.json();
-console.log('user from credintials ',user)
+        console.log('user from credintials ', user);
         if (!response.ok || !user) {
           throw new Error(user.message);
         }
-        console.log('user', {token:user.token,...user.user});
+        console.log('user', { token: user.token, ...user.user });
 
         return user; // Should return { id, email, name, ... }
       },
@@ -111,6 +111,6 @@ console.log('user from credintials ',user)
       version: '2.0',
     }),
   ],
-});
-
+}
+const handler = NextAuth(OPTIONS);
 export { handler as GET, handler as POST };

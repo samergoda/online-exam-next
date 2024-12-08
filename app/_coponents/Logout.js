@@ -1,23 +1,27 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { useSession ,getToken  } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+// import { cookies } from 'next/headers';
 
 export default function Logout() {
-  const {data} = useSession();
+  const { data, status } = useSession();
   const router = useRouter();
-  const [token,setToken]=useState('')
-  useEffect(()=>{
-      if(data){
+  const [token, setToken] = useState('');
 
-          setToken(data.token)
-          console.log(token);
-        }
-      
-    //   console.log('token', token);
+  useEffect(() => {
+    if (status === 'authenticated' && data?.token) {
+      setToken(data.token);
+    //   console.log('Token:', data.token);
+    }
+  }, [data, status]);
 
-  },[data, token])
-if(!data) return null
+  if (status === 'unauthenticated') {
+    // If the session is already cleared, navigate to the login page
+    router.push('/auth/login');
+    return null;
+  }
+
   async function handleLogout() {
     try {
       const response = await fetch(
@@ -31,20 +35,22 @@ if(!data) return null
         }
       );
       const result = await response.json();
-      console.log(result);
+    //   console.log('Logout response:', result);
 
       if (!response.ok) {
-        throw new Error(result.message);
+        throw new Error(result.message || 'Failed to logout. Please try again.');
       }
 
     //   console.log('Logout successful');
-      
+
       // Clear cookies
-      document.cookie = 'token=; Max-Age=0; Path=/; SameSite=Lax;'; 
+      document.cookie = 'token=; Max-Age=0; Path=/; SameSite=Lax;';
       document.cookie = 'next-auth.session-token=; Max-Age=0; Path=/;';
-      
-      // Redirect to login page
-      router.push('/auth/login');
+// (await cookies()).delete('next-auth.session-token')
+      // Use next-auth's signOut to properly clear the session
+      await signOut({ callbackUrl: '/auth/login' }); 
+    // router.push('/auth/logout');
+
     } catch (error) {
       console.error('Error during logout:', error.message);
     }

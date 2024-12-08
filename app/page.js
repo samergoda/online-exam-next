@@ -1,13 +1,35 @@
 import Image from 'next/image';
-import Logout from './_coponents/Logout';
+import SideNav from './_coponents/SideNav';
+import { getServerSession } from 'next-auth';
+import { OPTIONS } from './api/auth/[...nextauth]/route';
+import Subjects from './_coponents/Subjects';
 
-export default function Home() {
+export default async function Home() {
+  // Get the session data
+  const session = await getServerSession(OPTIONS);
+
+  // Fetch categories from the API
+
+  // async function getOneSubject(id) {
+  //   const response = await fetch(
+  //     `https://exam.elevateegy.com/api/v1/subjects/${id}`,
+  //     {
+  //       method: 'GET',
+  //       headers: {
+  //         token: session.token,
+  //       },
+  //     }
+  //   );
+
+  //   const result = await response.json();
+  //   return result.subjects || [];
+  // }
+  // const subjects = await getCategories();
 
   return (
     <div>
-      <Logout />
-
-      <h1>welcome to home page</h1>
+      <SideNav />
+      <Subjects />
     </div>
   );
 }

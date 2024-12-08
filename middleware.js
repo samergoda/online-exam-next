@@ -8,7 +8,14 @@ export default async function middleware(request) {
     secret: process.env.NEXTAUTH_SECRET,
   });
   // console.log('token from middleware', nextToken);
-
+  // if (request.nextUrl.pathname === "/auth/logout") {
+  //   const response = NextResponse.redirect(new URL("/auth/login", request.url));
+  //   response.cookies.delete("connect.sid");
+   
+  //   console.log("Response cookies:", response.cookies.getAll());
+   
+  //   return response;
+  // }
   // authnicate
   if (!token) return NextResponse.rewrite(new URL('/auth/login', request.url));
 

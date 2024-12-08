@@ -28,6 +28,7 @@ function Page() {
 
   const [errorMessage, setErrorMessage] = useState(null);
   const [success, setSuccess] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -73,9 +74,11 @@ function Page() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Signup failed');
+        throw new Error(errorData.message);
       } else {
         setSuccess(true);
+      router.push('/auth/login');
+
       }
     } catch (error) {
       setErrorMessage(error.message);
@@ -134,7 +137,7 @@ function Page() {
             Already have an account?
           </Link>
         </div>
-
+        {/* {errorMessage && errorMessage} */}
         <Button>{loading ? 'loading...' : 'sign up'}</Button>
       </form>
     </div>
