@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import SideNav from './_coponents/SideNav';
 import { getServerSession } from 'next-auth';
 import { OPTIONS } from './api/auth/[...nextauth]/route';
 import Subjects from './_coponents/Subjects';
@@ -28,7 +27,6 @@ export default async function Home() {
 
   return (
     <div>
-      <SideNav />
       <Subjects />
     </div>
   );

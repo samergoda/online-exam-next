@@ -1,6 +1,9 @@
 import localFont from 'next/font/local';
 import './globals.css';
 import AuthProvider from '@/context/Authprovider';
+import SideNav from './_coponents/SideNav';
+import Button from './_coponents/Button';
+import Link from 'next/link';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -22,7 +25,20 @@ export default function RootLayout({ children }) {
   return (
     <html lang='en'>
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <main className='flex'>
+            <SideNav />
+            <div className='w-full'>
+              <input
+                type='search'
+                className='w-full border p-2'
+                placeholder='search your exam'
+              />
+              <Link href='/exams'>start quiz</Link>
+              {children}
+            </div>
+          </main>
+        </AuthProvider>
       </body>
     </html>
   );
