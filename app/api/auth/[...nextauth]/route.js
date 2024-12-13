@@ -24,7 +24,7 @@ export const OPTIONS ={
     CredentialsProvider({
       async authorize(credentials) {
         // const credential = credentials;
-        console.log('credentials', credentials);
+        // console.log('credentials', credentials);
 
         const response = await fetch(
           'https://exam.elevateegy.com/api/v1/auth/signin',
@@ -39,11 +39,11 @@ export const OPTIONS ={
         );
 
         const user = await response.json();
-        console.log('user from credintials ', user);
+        // console.log('user from credintials ', user);
         if (!response.ok || !user) {
           throw new Error(user.message);
         }
-        console.log('user', { token: user.token, ...user.user });
+        // console.log('user', { token: user.token, ...user.user });
 
         return user; // Should return { id, email, name, ... }
       },

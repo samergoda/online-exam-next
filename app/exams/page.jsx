@@ -4,7 +4,7 @@ import ExamCard from '../_coponents/ExamCard';
 
 async function page() {
   const session = await getServerSession(OPTIONS);
-  console.log(session.token);
+  console.log('session.token',session.token);
   async function getAllExams() {
     let data = await fetch('https://exam.elevateegy.com/api/v1/exams', {
       method: 'GET',
@@ -27,6 +27,7 @@ async function page() {
             title={e.title}
             numberOfQuestions={e.numberOfQuestions}
             duration={e.duration}
+            token={session.token}
             id={e._id}
           />
         ))}

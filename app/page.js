@@ -5,7 +5,7 @@ import Subjects from './_coponents/Subjects';
 
 export default async function Home() {
   // Get the session data
-  const session = await getServerSession(OPTIONS);
+  // const session = await getServerSession(OPTIONS);
 
   // Fetch categories from the API
 
@@ -26,7 +26,7 @@ export default async function Home() {
   // const subjects = await getCategories();
 
   return (
-    <div>
+    <div className='bg-white p-3'>
       <Subjects />
     </div>
   );

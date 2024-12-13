@@ -12,7 +12,7 @@ function Subjects() {
   const [numberOfPages, setNumberOfPages] = useState(1);
   const { ref, inView } = useInView();
   const { data } = useSession();
-  console.log(data);
+  // console.log(data);
   const getCategories = async (currentPage) => {
     // if (!hasMore || !session?.token) return;
 
@@ -50,15 +50,16 @@ function Subjects() {
 
   useEffect(() => {
     // Only fetch if in view, we have more items, and current page is within total pages
-    if (hasMore && page <= numberOfPages && data) {
+    if (hasMore && page <= numberOfPages && data ) {
       console.log(page);
       getCategories(page);
+      console.log(inView)
       setPage((prevPage) => prevPage + 1);
     }
-  }, [hasMore, page, numberOfPages, data]);
+  }, [hasMore, page, numberOfPages, data,inView]);
 
   return (
-    <div className='subjects flex flex-wrap'>
+    <div className='subjects flex flex-wrap gap-3'>
       {subjects.map((subject, index) => {
         // Attach ref only to the last item
         const isLastItem = index === subjects.length - 1;
@@ -66,13 +67,13 @@ function Subjects() {
           <div
             key={subject._id}
             ref={isLastItem ? ref : null}
-            className='subject-card w-2/6'
+            className='subject-card w-full lg:w-[31%]'
           >
             <Image
               src={subject.icon}
               alt={subject.name}
               width={500}
-              height={100}
+              height={300}
             />
             <h3>{subject.name}</h3>
           </div>
