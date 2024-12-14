@@ -3,10 +3,10 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import FacebookProvider from 'next-auth/providers/facebook';
 import TwitterProvider from 'next-auth/providers/twitter';
-export const OPTIONS ={
-  // pages: {
-  //   signIn: '/auth/signup',
-  // },
+export const OPTIONS = {
+  pages: {
+    signIn: '/auth/login',
+  },
   session: {
     strategy: 'jwt',
   },
@@ -16,8 +16,7 @@ export const OPTIONS ={
       return { ...token, ...user };
     },
     async session({ session, token, user }) {
-      // console.log('token from route', token);
-      return { ...session, ...token, ...user };
+      return { ...session, ...token };
     },
   },
   providers: [
@@ -113,4 +112,5 @@ export const OPTIONS ={
   ],
 }
 const handler = NextAuth(OPTIONS);
+
 export { handler as GET, handler as POST };

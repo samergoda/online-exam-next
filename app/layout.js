@@ -5,9 +5,7 @@ import SideNav from './_coponents/SideNav';
 import Button from './_coponents/Button';
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
-import { OPTIONS } from './api/auth/[...nextauth]/route';
-
-
+import { options } from './api/auth/[...nextauth]/route';
 
 export const metadata = {
   title: 'Online exam',
@@ -15,36 +13,14 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const session = await getServerSession(OPTIONS);
-  console.log('session from server', session);
+  // const session = await getServerSession(options);
+  // console.log('session from server', session);
   return (
     <html lang='en'>
       <body>
         <AuthProvider>
           <main className='flex gap-5 p-8 bg-[#FBF9F9]'>
-            {session && session.token ? (
-              <>
-                <SideNav />
-                <div className='w-full'>
-                  <div className='flex gap-3 mb-5'>
-                    <input
-                      type='search'
-                      className="w-full border px-4 rounded-[20px] shadow-[0px_15px_40px_0px_#0000001a] bg-[url('/carbon_search.png')] bg-[10px] ps-10 bg-no-repeat"
-                      placeholder='Search Quiz'
-                    />
-                    <Link
-                      className='bg-[#4461F2] text-white w-auto p-2 text-nowrap rounded-[20px]'
-                      href='/exams'
-                    >
-                      Start Quiz
-                    </Link>
-                  </div>
-                  {children}
-                </div>
-              </>
-            ) : (
-              <>{children}</>
-            )}
+            <div className='w-full'>{children}</div>
           </main>
         </AuthProvider>
       </body>

@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react';
 function Subjects() {
   const [subjects, setSubjects] = useState([]);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   const [numberOfPages, setNumberOfPages] = useState(1);
   const { ref, inView } = useInView();
   const { data } = useSession();
@@ -50,13 +50,16 @@ function Subjects() {
 
   useEffect(() => {
     // Only fetch if in view, we have more items, and current page is within total pages
-    if (hasMore && page <= numberOfPages && data ) {
+    if (page <= numberOfPages && data) {
+      if (subjects.length > 0 && page == 1) return;
       console.log(page);
+      setHasMore(false);
+
       getCategories(page);
-      console.log(inView)
+      console.log(inView);
       setPage((prevPage) => prevPage + 1);
     }
-  }, [hasMore, page, numberOfPages, data,inView]);
+  }, [hasMore, page, numberOfPages, data, inView]);
 
   return (
     <div className='subjects flex flex-wrap gap-3'>

@@ -31,7 +31,7 @@ function SideNav() {
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
-        <div className='p-4'>
+        <div className='p-4 w-max'>
           <Image src='/Final Logo 1.png' width={200} height={200} alt='logo' />
           
           <ul className='mt-8 space-y-2'>
