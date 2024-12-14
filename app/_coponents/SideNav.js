@@ -4,27 +4,29 @@ import Logout from './Logout';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useSelectedLayoutSegment } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 function SideNav() {
   const [isOpen, setIsOpen] = useState(false);
   const segment = useSelectedLayoutSegment();
-
+  const { data } = useSession();
+  // console.log('session from server', data);
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
-
+  if (!data) return null;
   return (
     <>
       {/* Mobile Toggle Button */}
-      <button 
-        onClick={toggleMenu} 
+      <button
+        onClick={toggleMenu}
         className='md:hidden fixed top-4 left-4 z-50 p-2 bg-[#4461F2] text-white rounded-md'
       >
         {isOpen ? 'Close' : 'Menu'}
       </button>
 
       {/* Side Navigation */}
-      <div 
+      <div
         className={`
           fixed top-0 left-0 h-full w-64 md:bg-transparent bg-white transform transition-transform duration-300 ease-in-out z-40
           md:relative md:translate-x-0 
@@ -33,7 +35,7 @@ function SideNav() {
       >
         <div className='p-4 w-max'>
           <Image src='/Final Logo 1.png' width={200} height={200} alt='logo' />
-          
+
           <ul className='mt-8 space-y-2'>
             <li>
               <Link
@@ -60,11 +62,11 @@ function SideNav() {
                 dashboard
               </Link>
             </li>
-            
+
             <li>
-              <Link 
+              <Link
                 onClick={toggleMenu}
-                className='rounded-[10px] flex items-center gap-10 p-2' 
+                className='rounded-[10px] flex items-center gap-10 p-2'
                 href='/'
               >
                 <span>
@@ -86,7 +88,7 @@ function SideNav() {
                 quiz history
               </Link>
             </li>
-            
+
             <li className='rounded-[10px] flex items-center gap-10 p-2'>
               <span>
                 <svg
@@ -109,10 +111,7 @@ function SideNav() {
 
         {/* Overlay for mobile */}
         {isOpen && (
-          <div 
-            onClick={toggleMenu} 
-            className='md:hidden fixed inset-0 z-30'
-          />
+          <div onClick={toggleMenu} className='md:hidden fixed inset-0 z-30' />
         )}
       </div>
     </>

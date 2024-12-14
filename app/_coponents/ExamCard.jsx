@@ -3,26 +3,12 @@ import { useState } from 'react';
 import Popup from './Popup';
 // import { useSession } from 'next-auth/react';
 
-function ExamCard({ title, numberOfQuestions, duration, id,token }) {
-  const [question, setQuestion] = useState();
+function ExamCard({ title, numberOfQuestions, duration, id, token }) {
   const [showPopup, setShowPopup] = useState(false);
-//   const session = useSession();
-//   console.log('session', session);
-  async function handleShowPopup(id) {
-    console.log(token);
-    let data = await fetch(
-      `https://exam.elevateegy.com/api/v1/questions?exam=${id}`,
-      {
-        method: 'GET',
-        headers: {
-           token,
-        },
-      }
-    );
-    let res = await data.json();
-    console.log('res questio ', res);
+  //   const session = useSession();
+  //   console.log('session', session);
+  function handleShowPopup() {
     setShowPopup(true);
-    setQuestion(res);
   }
   return (
     <>
@@ -35,14 +21,13 @@ function ExamCard({ title, numberOfQuestions, duration, id,token }) {
           <p>Duration: {duration}</p>
           <button
             className='border bg-gray-950 text-white'
-            onClick={() => handleShowPopup(id)}
+            onClick={handleShowPopup}
           >
- 
             Start
           </button>
         </div>
       </li>
-      {showPopup && <Popup question={question} setShowPopup={setShowPopup} />}
+      {showPopup && <Popup token={token} id={id} setShowPopup={setShowPopup} />}
     </>
   );
 }

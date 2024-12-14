@@ -16,6 +16,7 @@ export const OPTIONS = {
       return { ...token, ...user };
     },
     async session({ session, token, user }) {
+      console.log('user from route',user)
       return { ...session, ...token };
     },
   },
@@ -112,5 +113,4 @@ export const OPTIONS = {
   ],
 }
 const handler = NextAuth(OPTIONS);
-
 export { handler as GET, handler as POST };

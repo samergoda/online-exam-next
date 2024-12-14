@@ -2,6 +2,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import AuthProvider from '@/context/Authprovider';
 import SideNav from './_coponents/SideNav';
+import Search from './_coponents/Search';
 import Button from './_coponents/Button';
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
@@ -20,7 +21,12 @@ export default async function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <main className='flex gap-5 p-8 bg-[#FBF9F9]'>
-            <div className='w-full'>{children}</div>
+      <SideNav />
+            <div className='w-full'>
+      <Search />
+              
+              
+              {children}</div>
           </main>
         </AuthProvider>
       </body>
