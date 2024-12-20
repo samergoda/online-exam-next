@@ -16,7 +16,7 @@ async function page() {
     return res;
   }
   let resu = await getAllExams();
-  console.log('resu', resu);
+  // console.log('resu', resu);
   //   console.log(resu.exams);
   return (
     <>

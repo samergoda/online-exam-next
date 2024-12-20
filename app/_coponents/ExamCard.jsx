@@ -12,6 +12,7 @@ function ExamCard({ title, numberOfQuestions, duration, id, token }) {
     currentQuestion: 0,
     selectedAnswers: { answers: [], time: 0 },
     results: null,
+    showResult: false,
     status: 'not_started',
   });
 
@@ -99,7 +100,7 @@ function ExamCard({ title, numberOfQuestions, duration, id, token }) {
       }
 
       const results = await response.json();
-
+      console.log(results);
       setExamState((prev) => ({
         ...prev,
         results,
@@ -116,12 +117,14 @@ function ExamCard({ title, numberOfQuestions, duration, id, token }) {
 
   // Handle timer ending
   function handleTimerEnd() {
-    // Automatically submit exam when time is out
-    setExamState((prev) => ({
-      ...prev,
-      status: 'timeout',
-    }));
-    handleSubmitExam();
+    // Avoid direct state update during render
+    setTimeout(() => {
+      handleSubmitExam();
+      setExamState((prev) => ({
+        ...prev,
+        status: 'timeout',
+      }));
+    }, 0); // Schedule it for the next event loop
   }
 
   // Navigation functions
@@ -224,29 +227,102 @@ function ExamCard({ title, numberOfQuestions, duration, id, token }) {
               // Results Display
               <div>
                 <h3>your score</h3>
-                {examState.results && (
+                {examState.results && !examState.showResult ? (
                   <>
                     <div className='flex justify-evenly items-center'>
-                      <CircleProgress percentage={Number(examState.results.total.replace('%',''))} />
+                      <CircleProgress
+                        percentage={Number(
+                          examState.results.total.replace('%', '')
+                        )}
+                      />
 
                       <div className=''>
-
-                        <p className='text-[#02369C] mb-3'>Correct <span className=' rounded-full px-2 py-1 border   border-[#02369c]'> {examState.results.correct}</span></p>
+                        <p className='text-[#02369C] mb-3'>
+                          Correct{' '}
+                          <span className=' rounded-full px-2 py-1 border   border-[#02369c]'>
+                            {' '}
+                            {examState.results.correct}
+                          </span>
+                        </p>
                         <p className='text-[#CC1010]'>
-                          Incorrect <span className=' rounded-full px-2 py-1 border  border-[#CC1010]'> {examState.results.incorrect || 0}
-                        </span></p>
+                          Incorrect{' '}
+                          <span className=' rounded-full px-2 py-1 border  border-[#CC1010]'>
+                            {' '}
+                            {examState.results.wrong || 0}
+                          </span>
+                        </p>
                       </div>
                     </div>
-                     <Button>Show result</Button>
+                    <button
+                      onClick={() => {
+                        setExamState((prev) => ({
+                          ...prev,
+                          showResult: true,
+                        }));
+                        console.log('worked');
+                      }}
+                    >
+                      Show result
+                    </button>
                   </>
-                )}
+                ) : examState.results && examState.showResult ? (
+                  <div className='flex gap-5'>
+                    {examState.results.WrongQuestions.map((wrongQ, index) => (
+                      <div key={`wrong-question-${index}`} className='w-1/2'>
+                        {examState.questions.map((question) => {
+                          if (question._id === wrongQ.QID) {
+                            return (
+                              <div key={`question-${question._id}`}>
+                                <p className='text-[24px] font-medium mb-4'>
+                                  {question.question}
+                                </p>
+                                <ul>
+                                  {question.answers.map((answer, aIndex) => (
+                                    <li
+                                      key={`answer-${question._id}-${aIndex}`}
+                                      className={`bg-[#EDEFF3] mb-3 rounded-[10px] p-[16px_8px] ${
+                                        answer.key === wrongQ.correctAnswer
+                                          ? 'bg-green-600'
+                                          : answer.key === wrongQ.inCorrectAnswer
+                                          ? 'bg-red-600'
+                                          : ''
+                                      }`}
+                                    >
+                                      <input
+                                        type='radio'
+                                        name={`question-${question._id}`}
+                                        id={`answer-${question._id}-${aIndex}`}
+                                        className='me-3'
+                                        disabled
+                                        checked={
+                                          answer.key === wrongQ.correctAnswer
+                                        }
+                                      />
+                                      <label
+                                        className={`text-[20px] `}
+                                        htmlFor={`answer-${question._id}-${aIndex}`}
+                                      >
+                                        {answer.answer}
+                                      </label>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            );
+                          }
+                          return null;
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             ) : (
               // Active Exam
               <>
                 <div className='flex justify-between'>
                   <p>
-                    Question {examState.currentQuestion + 1} of{' '}
+                    Question {examState.currentQuestion + 1} of
                     {examState.questions.length}
                   </p>
                   <p>
