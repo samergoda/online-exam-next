@@ -4,21 +4,22 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useInView } from 'react-intersection-observer';
 import { useSession } from 'next-auth/react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 function Subjects() {
   const [subjects, setSubjects] = useState([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
   const [numberOfPages, setNumberOfPages] = useState(1);
   const { ref, inView } = useInView();
   const { data } = useSession();
   // console.log(data);
-  const getCategories = async (currentPage) => {
+  const getCategories = async () => {
     // if (!hasMore || !session?.token) return;
-
+setPage(page=>page+1)
     try {
       const response = await fetch(
-        `https://exam.elevateegy.com/api/v1/subjects?limit=3&page=${currentPage}`,
+        `https://exam.elevateegy.com/api/v1/subjects?limit=3&page=${page}`,
         {
           method: 'GET',
           headers: {
@@ -36,7 +37,7 @@ function Subjects() {
       console.log(result);
       if (
         result.subjects.length === 0 ||
-        currentPage > result.metadata.numberOfPages
+        page > result.metadata.numberOfPages
       ) {
         setHasMore(false);
       } else {
@@ -52,25 +53,41 @@ function Subjects() {
     // Only fetch if in view, we have more items, and current page is within total pages
     if (page <= numberOfPages && data) {
       if (subjects.length > 0 && page == 1) return;
-      console.log(page);
+      // console.log(page);
       setHasMore(false);
 
-      getCategories(page);
+      getCategories();
       console.log(inView);
       setPage((prevPage) => prevPage + 1);
     }
   }, [hasMore, page, numberOfPages, data, inView]);
 
   return (
-    <div className='subjects flex flex-wrap gap-3'>
-      {subjects.map((subject, index) => {
+   
+
+
+
+
+
+
+
+<InfiniteScroll
+  dataLength={2} //This is important field to render the next data
+  next={getCategories}
+  hasMore={hasMore}
+  loader={<h4>Loading...</h4>}
+
+
+>
+<div className='subjects flex flex-wrap gap-3'>
+{subjects.map((subject, index) => {
         // Attach ref only to the last item
-        const isLastItem = index === subjects.length - 1;
+        // const isLastItem = index === subjects.length - 1;
         return (
           <div
             key={subject._id}
-            ref={isLastItem ? ref : null}
-            className='subject-card w-full lg:w-[31%]'
+            // ref={isLastItem ? ref : null}
+            className='subject-card w-full md:w-[31%]'
           >
             <Image
               src={subject.icon}
@@ -83,6 +100,14 @@ function Subjects() {
         );
       })}
     </div>
+
+</InfiniteScroll>
+
+
+
+
+
+    
   );
 }
 
