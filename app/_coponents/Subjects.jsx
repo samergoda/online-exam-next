@@ -2,28 +2,27 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useInView } from 'react-intersection-observer';
 import { useSession } from 'next-auth/react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 function Subjects() {
   const [subjects, setSubjects] = useState([]);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [numberOfPages, setNumberOfPages] = useState(1);
-  const { ref, inView } = useInView();
-  const { data } = useSession();
-  // console.log(data);
-  const getCategories = async () => {
-    // if (!hasMore || !session?.token) return;
-setPage(page=>page+1)
+  const [isLoading, setIsLoading] = useState(false);
+  const { data: session } = useSession();
+
+  const getCategories = async (pageNumber) => {
+    if (isLoading || !session?.token) return;
+
+    setIsLoading(true);
     try {
       const response = await fetch(
-        `https://exam.elevateegy.com/api/v1/subjects?limit=3&page=${page}`,
+        `https://exam.elevateegy.com/api/v1/subjects?limit=3&page=${pageNumber}`,
         {
           method: 'GET',
           headers: {
-            token: data.token,
+            token: session.token,
           },
         }
       );
@@ -33,60 +32,62 @@ setPage(page=>page+1)
       }
 
       const result = await response.json();
-      setNumberOfPages(result.metadata.numberOfPages);
-      console.log(result);
-      if (
-        result.subjects.length === 0 ||
-        page > result.metadata.numberOfPages
-      ) {
+      
+      if (!result.subjects.length) {
         setHasMore(false);
-      } else {
-        setSubjects((prevSubjects) => [...prevSubjects, ...result.subjects]);
+        return;
       }
+
+      // Use a Set to ensure unique subjects based on _id
+      setSubjects(prevSubjects => {
+        const uniqueSubjects = new Set([...prevSubjects, ...result.subjects].map(s => JSON.stringify(s)));
+        return Array.from(uniqueSubjects).map(s => JSON.parse(s));
+      });
+      
+      setPage(pageNumber + 1);
     } catch (error) {
       console.error('Error fetching categories:', error);
       setHasMore(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    // Only fetch if in view, we have more items, and current page is within total pages
-    if (page <= numberOfPages && data) {
-      if (subjects.length > 0 && page == 1) return;
-      // console.log(page);
-      setHasMore(false);
-
-      getCategories();
-      console.log(inView);
-      setPage((prevPage) => prevPage + 1);
+  // Handle infinite scroll loading
+  const loadMore = () => {
+    if (!isLoading && hasMore) {
+      getCategories(page);
     }
-  }, [hasMore, page, numberOfPages, data, inView]);
+  };
+
+  // Initial load
+  useEffect(() => {
+    if (session?.token && subjects.length === 0) {
+      getCategories(1);
+    }
+  }, [session]);
+
+  // Reset state when component unmounts or session changes
+  useEffect(() => {
+    return () => {
+      setSubjects([]);
+      setPage(1);
+      setHasMore(true);
+      setIsLoading(false);
+    };
+  }, [session?.token]);
 
   return (
-   
-
-
-
-
-
-
-
-<InfiniteScroll
-  dataLength={2} //This is important field to render the next data
-  next={getCategories}
-  hasMore={hasMore}
-  loader={<h4>Loading...</h4>}
-
-
->
-<div className='subjects flex flex-wrap gap-3'>
-{subjects.map((subject, index) => {
-        // Attach ref only to the last item
-        // const isLastItem = index === subjects.length - 1;
-        return (
+    <InfiniteScroll
+      dataLength={subjects.length}
+      next={loadMore}
+      hasMore={hasMore}
+      loader={<h4>Loading...</h4>}
+    >
+      <div className='subjects flex flex-wrap gap-3'>
+        {subjects.map((subject) => (
           <div
             key={subject._id}
-            // ref={isLastItem ? ref : null}
             className='subject-card w-full md:w-[31%]'
           >
             <Image
@@ -97,17 +98,9 @@ setPage(page=>page+1)
             />
             <h3>{subject.name}</h3>
           </div>
-        );
-      })}
-    </div>
-
-</InfiniteScroll>
-
-
-
-
-
-    
+        ))}
+      </div>
+    </InfiniteScroll>
   );
 }
 
