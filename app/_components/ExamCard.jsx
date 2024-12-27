@@ -3,7 +3,11 @@ import { useEffect, useState } from 'react';
 import Popup from './Popup';
 import { CountdownTimer } from 'nextjs-countdown-timer';
 import CircleProgress from './CircleProgress.js';
+import Instraction from './Instructions.js';
 import Button from './Button';
+import DisplayResult from './DisplayResult';
+import CurrentQuestion from './CurrentQuestion';
+import ShowWrongAnswers from './ShowWrongAnswers.jsx';
 
 function ExamCard({ title, numberOfQuestions, duration, id, token }) {
   const [examState, setExamState] = useState({
@@ -208,19 +212,7 @@ function ExamCard({ title, numberOfQuestions, duration, id, token }) {
             {examState.status === 'not_started' ||
             examState.questions.length === 0 ? (
               <>
-                <h3>Exam Instructions</h3>
-                <ul>
-                  <li>Read each question carefully</li>
-                  <li>Select the best answer</li>
-                  <li>Manage your time wisely</li>
-                  <li>You cannot go back once submitted</li>
-                </ul>
-                <button
-                  className='w-full py-2 mt-2 rounded-[20px] bg-[#4461F2] text-white'
-                  onClick={handleStartExam}
-                >
-                  start exam
-                </button>
+                <Instraction handleStartExam={handleStartExam} />
               </>
             ) : examState.status === 'completed' ||
               examState.status === 'timeout' ? (
@@ -229,90 +221,17 @@ function ExamCard({ title, numberOfQuestions, duration, id, token }) {
                 <h3>your score</h3>
                 {examState.results && !examState.showResult ? (
                   <>
-                    <div className='flex justify-evenly items-center'>
-                      <CircleProgress
-                        percentage={Number(
-                          examState.results.total.replace('%', '')
-                        )}
-                      />
-
-                      <div className=''>
-                        <p className='text-[#02369C] mb-3'>
-                          Correct{' '}
-                          <span className=' rounded-full px-2 py-1 border   border-[#02369c]'>
-                            {' '}
-                            {examState.results.correct}
-                          </span>
-                        </p>
-                        <p className='text-[#CC1010]'>
-                          Incorrect{' '}
-                          <span className=' rounded-full px-2 py-1 border  border-[#CC1010]'>
-                            {' '}
-                            {examState.results.wrong || 0}
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setExamState((prev) => ({
-                          ...prev,
-                          showResult: true,
-                        }));
-                        console.log('worked');
-                      }}
-                    >
-                      Show result
-                    </button>
+                    <DisplayResult />
                   </>
                 ) : examState.results && examState.showResult ? (
                   <div className='flex gap-5'>
                     {examState.results.WrongQuestions.map((wrongQ, index) => (
-                      <div key={`wrong-question-${index}`} className='w-1/2'>
-                        {examState.questions.map((question) => {
-                          if (question._id === wrongQ.QID) {
-                            return (
-                              <div key={`question-${question._id}`}>
-                                <p className='text-[24px] font-medium mb-4'>
-                                  {question.question}
-                                </p>
-                                <ul>
-                                  {question.answers.map((answer, aIndex) => (
-                                    <li
-                                      key={`answer-${question._id}-${aIndex}`}
-                                      className={`bg-[#EDEFF3] mb-3 rounded-[10px] p-[16px_8px] ${
-                                        answer.key === wrongQ.correctAnswer
-                                          ? 'bg-green-600'
-                                          : answer.key === wrongQ.inCorrectAnswer
-                                          ? 'bg-red-600'
-                                          : ''
-                                      }`}
-                                    >
-                                      <input
-                                        type='radio'
-                                        name={`question-${question._id}`}
-                                        id={`answer-${question._id}-${aIndex}`}
-                                        className='me-3'
-                                        disabled
-                                        checked={
-                                          answer.key === wrongQ.correctAnswer
-                                        }
-                                      />
-                                      <label
-                                        className={`text-[20px] `}
-                                        htmlFor={`answer-${question._id}-${aIndex}`}
-                                      >
-                                        {answer.answer}
-                                      </label>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            );
-                          }
-                          return null;
-                        })}
-                      </div>
+                      <ShowWrongAnswers
+                        key={index}
+                        wrongQ={wrongQ}
+                        index={index}
+                        examState={examState}
+                      />
                     ))}
                   </div>
                 ) : null}
@@ -327,8 +246,8 @@ function ExamCard({ title, numberOfQuestions, duration, id, token }) {
                   </p>
                   <p>
                     <CountdownTimer
-                      initialSeconds={10}
-                      // initialSeconds={duration * 60}
+                      // initialSeconds={10}
+                      initialSeconds={duration * 60}
                       onTimerEnd={handleTimerEnd}
                     />
                   </p>
@@ -369,53 +288,7 @@ function ExamCard({ title, numberOfQuestions, duration, id, token }) {
                 </div>
 
                 {/* Current Question */}
-                <div>
-                  <p className='text-[24px] font-medium'>
-                    {examState.questions[examState.currentQuestion].question}
-                  </p>
-                  <ul>
-                    {examState.questions[examState.currentQuestion].answers.map(
-                      (answer, aIndex) => (
-                        <li
-                          key={`answer-${examState.currentQuestion}-${aIndex}`}
-                          className='bg-[#EDEFF3] mb-3 rounded-[10px] p-[16px_8px]'
-                        >
-                          <input
-                            type={
-                              examState.questions[examState.currentQuestion]
-                                .type === 'single_choice'
-                                ? 'radio'
-                                : 'checkbox'
-                            }
-                            name={`question-${examState.currentQuestion}`}
-                            id={`answer-${examState.currentQuestion}-${aIndex}`}
-                            className='me-3'
-                            onChange={() =>
-                              handleAnswerSelect(
-                                examState.questions[examState.currentQuestion]
-                                  ._id,
-                                answer.key,
-                                examState.questions[examState.currentQuestion]
-                                  .type
-                              )
-                            }
-                            checked={isAnswerSelected(
-                              examState.questions[examState.currentQuestion]
-                                ._id,
-                              answer.key
-                            )}
-                          />
-                          <label
-                            className='text-[20px]'
-                            htmlFor={`answer-${examState.currentQuestion}-${aIndex}`}
-                          >
-                            {answer.answer}
-                          </label>
-                        </li>
-                      )
-                    )}
-                  </ul>
-                </div>
+                <CurrentQuestion examState={examState} />
               </>
             )}
 

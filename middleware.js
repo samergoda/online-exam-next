@@ -16,9 +16,13 @@ export default async function middleware(request) {
    
   //   return response;
   // }
+  const currentPath = request.nextUrl.pathname;
+  console.log('request.url',request.url);
   // authnicate
   if (!token) return NextResponse.rewrite(new URL('/auth/login', request.url));
-
+  if (token && currentPath !== '/') {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
   //   // role based access level
   //   if (pathsOfRole?.indexOf(currentUrl) === -1)
   //     return NextResponse.redirect(new URL("/denied", request.url));
@@ -27,5 +31,6 @@ export default async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/', '/dashboard'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+  ],
 };

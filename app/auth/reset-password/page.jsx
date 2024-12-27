@@ -1,7 +1,7 @@
-'use client'
+'use client';
 import { useState } from 'react';
-import Button from '@/app/_coponents/Button';
-import Input from '@/app/_coponents/Input';
+import Button from '@/app/_components/Button';
+import Input from '@/app/_components/Input';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -25,8 +25,14 @@ function Page() {
     const { oldPassword, password, rePassword } = formData;
 
     // Validation
-    if (password.length < 6 || !/[A-Z]/.test(password) || !/\d/.test(password)) {
-      setError('Password must be at least 6 characters, include an uppercase letter and a number.');
+    if (
+      password.length < 6 ||
+      !/[A-Z]/.test(password) ||
+      !/\d/.test(password)
+    ) {
+      setError(
+        'Password must be at least 6 characters, include an uppercase letter and a number.'
+      );
       return;
     }
     if (password !== rePassword) {
@@ -36,13 +42,16 @@ function Page() {
 
     try {
       setError('');
-      const response = await fetch('https://exam.elevateegy.com/api/v1/auth/changePassword', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ oldPassword, password }),
-      });
+      const response = await fetch(
+        'https://exam.elevateegy.com/api/v1/auth/changePassword',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ oldPassword, password }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -50,7 +59,7 @@ function Page() {
       }
 
       setSuccess('Password changed successfully!');
-      router.push('/auth/login'); 
+      router.push('/auth/login');
     } catch (err) {
       setError(err.message);
     }
@@ -58,36 +67,36 @@ function Page() {
 
   return (
     <div>
-      <h2 className="font-bold text-[25px] mb-[31px]">Reset Password</h2>
-      <div className="flex flex-col gap-4">
+      <h2 className='font-bold text-[25px] mb-[31px]'>Reset Password</h2>
+      <div className='flex flex-col gap-4'>
         <form onSubmit={handleResetPassword} className='flex flex-col gap-4'>
           <Input
-            type="password"
-            placeholder="Old Password"
-            name="oldPassword"
+            type='password'
+            placeholder='Old Password'
+            name='oldPassword'
             value={formData.oldPassword}
             onChange={handleChange}
           />
           <Input
-            type="password"
-            placeholder="New Password"
-            name="password"
+            type='password'
+            placeholder='New Password'
+            name='password'
             value={formData.password}
             onChange={handleChange}
           />
           <Input
-            type="password"
-            placeholder="Confirm Password"
-            name="rePassword"
+            type='password'
+            placeholder='Confirm Password'
+            name='rePassword'
             value={formData.rePassword}
             onChange={handleChange}
           />
-          <Button type="submit">Reset Password</Button>
+          <Button type='submit'>Reset Password</Button>
         </form>
-        {error && <p className="text-red-500 text-sm max-w-[400px]">{error}</p>}
-        {success && <p className="text-green-500 text-sm">{success}</p>}
-        <div className="text-end">
-          <Link href="/auth/forgetPassword">Recover Password</Link>
+        {error && <p className='text-red-500 text-sm max-w-[400px]'>{error}</p>}
+        {success && <p className='text-green-500 text-sm'>{success}</p>}
+        <div className='text-end'>
+          <Link href='/auth/forgetPassword'>Recover Password</Link>
         </div>
       </div>
     </div>

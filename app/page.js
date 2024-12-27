@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import { getServerSession } from 'next-auth';
 import { OPTIONS } from './api/auth/[...nextauth]/route';
-import Subjects from './_coponents/Subjects';
-import SideNav from './_coponents/SideNav';
+import Subjects from './_components/Subjects';
+import SideNav from './_components/SideNav';
 import Link from 'next/link';
 
 export default async function Home() {
@@ -30,13 +30,10 @@ export default async function Home() {
   return (
     <div className='bg-white flex p-3'>
       <div>
+        <div className='w-full'></div>
 
-      <div className='w-full'>
-      
+        <Subjects />
       </div>
-
-      <Subjects />
-            </div>
     </div>
   );
 }

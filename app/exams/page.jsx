@@ -1,10 +1,10 @@
 import { getServerSession } from 'next-auth';
 import { OPTIONS } from './../api/auth/[...nextauth]/route';
-import ExamCard from '../_coponents/ExamCard';
+import ExamCard from '../_components/ExamCard';
 
 async function page() {
   const session = await getServerSession(OPTIONS);
-  console.log('session.token',session.token);
+  console.log('session.token', session.token);
   async function getAllExams() {
     let data = await fetch('https://exam.elevateegy.com/api/v1/exams', {
       method: 'GET',

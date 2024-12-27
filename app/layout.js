@@ -1,9 +1,9 @@
 import localFont from 'next/font/local';
 import './globals.css';
 import AuthProvider from '@/context/Authprovider';
-import SideNav from './_coponents/SideNav';
-import Search from './_coponents/Search';
-import Button from './_coponents/Button';
+import SideNav from './_components/SideNav';
+import Search from './_components/Search';
+import Button from './_components/Button';
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { options } from './api/auth/[...nextauth]/route';
@@ -21,12 +21,12 @@ export default async function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <main className='flex gap-5 p-8 bg-[#FBF9F9]'>
-      <SideNav />
+            <SideNav />
             <div className='w-full'>
-      <Search />
-              
-              
-              {children}</div>
+              <Search />
+
+              {children}
+            </div>
           </main>
         </AuthProvider>
       </body>

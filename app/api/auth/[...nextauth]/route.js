@@ -48,54 +48,10 @@ export const OPTIONS = {
         return user; // Should return { id, email, name, ... }
       },
       credentials: {
-        email: {
-          label: 'Email',
-          placeholder: 'Please enter your email',
-          type: 'email',
-        },
-        password: {
-          label: 'Password',
-          placeholder: 'Please enter your password',
-          type: 'password',
-        },
+        email: {},
+        password: {},
       },
-      //   credentials: {
-      //     email: {
-      //       label: "User Name",
-      //       placeholder: "Please enter your user Name",
-      //       type: "text",
-      //     },
-      //     username: {
-      //       label: "User Name",
-      //       placeholder: "Please enter your user Name",
-      //       type: "text",
-      //     },
-      //     firstName: {
-      //       label: "User Name",
-      //       placeholder: "Please enter your user Name",
-      //       type: "text",
-      //     },
-      //     lastName: {
-      //       label: "User Name",
-      //       placeholder: "Please enter your user Name",
-      //       type: "text",
-      //     },
-      //     password: {
-      //       label: "User Name",
-      //       placeholder: "Please enter your user Name",
-      //       type: "password",
-      //     },
-      //     rePassword: {
-      //       label: "Password",
-      //       placeholder: "Please enter your password",
-      //       type: "password",
-      //     },
-      //     phone: {
-      //       label: "Password",
-      //       placeholder: "Please enter your password",
-      //       type: "tel",
-      //     },
-      // }
+     
     }),
     GoogleProvider({
       clientId: process.env.AUTH_GOOGLE_ID,

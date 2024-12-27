@@ -1,6 +1,6 @@
 'use client';
-import Button from '@/app/_coponents/Button';
-import Input from '@/app/_coponents/Input';
+import Button from '@/app/_components/Button';
+import Input from '@/app/_components/Input';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -33,7 +33,7 @@ function Page() {
       }
 
       setSuccessMessage('Code verified successfully!');
-      router.push('/auth/resetPassword')
+      router.push('/auth/resetPassword');
     } catch (error) {
       setErrorMessage(error.message);
     } finally {

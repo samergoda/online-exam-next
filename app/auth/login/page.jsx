@@ -1,30 +1,35 @@
-'use client';
-import Button from '@/app/_coponents/Button';
-import Input from '@/app/_coponents/Input';
+'use client'
 
+import Button from '@/app/_components/Button';
+import Input from '@/app/_components/Input';
+// import { handleSignin } from '@/app/_lib/action';
 import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 function Page() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { data } = useSession();
+  // const { data } = useSession();
 
-  // console.log('session data', data);
-
-  useEffect(() => {
-    if (data) {
-      router.push('/'); // Redirect if the user is already authenticated
-    }
-  }, [data, router]);
+  // useEffect(() => {
+  //   async function fetchData() {
+  //       let data = await create();
+  //       console.log('session data',data);
+  //       if (data) {
+  //         router.push('/'); // Redirect if the user is already authenticated
+  //       }
+     
+  //   }
+  //   fetchData();
+  // }, [ router]);
 
   const handleSubmit = async (e) => {
-    setloading(true);
+    setLoading(true);
     e.preventDefault();
     const result = await signIn('credentials', {
       email,
@@ -34,9 +39,9 @@ function Page() {
 
     if (result.error) {
       setErrorMessage(result.error);
-      setloading(false);
+      setLoading(false);
     } else {
-      router.push('/')
+      router.push('/');
     }
   };
 
@@ -48,12 +53,14 @@ function Page() {
           <Input
             type='text'
             placeholder='Enter Email'
+            name='email'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <Input
             type='password'
             placeholder='Password'
+            name='password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />

@@ -1,6 +1,6 @@
 'use client';
-import Button from '@/app/_coponents/Button';
-import Input from '@/app/_coponents/Input';
+import Button from '@/app/_components/Button';
+import Input from '@/app/_components/Input';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -39,7 +39,7 @@ function Page() {
       if (!response.ok) {
         throw new Error('Failed to send recovery email');
       }
-       router.push('/auth/verifyCode')
+      router.push('/auth/verifyCode');
     } catch (error) {
       setErrorMessage(error.message);
       setLoading(false);
