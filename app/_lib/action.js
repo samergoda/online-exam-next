@@ -47,3 +47,83 @@ export async function handleSignup(formData) {
     return { error: error.message };
   }
 }
+
+
+
+export async function handleResetPassword(formData) {
+  const { oldPassword, password, rePassword } = Object.fromEntries(formData.entries());
+
+  // Validation
+  if (password.length < 6 || !/[A-Z]/.test(password) || !/\d/.test(password)) {
+    return { error: 'Password must be at least 6 characters, include an uppercase letter, and a number.' };
+  }
+  if (password !== rePassword) {
+    return { error: 'Passwords do not match.' };
+  }
+
+  try {
+    const response = await fetch('https://exam.elevateegy.com/api/v1/auth/changePassword', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ oldPassword, password }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { error: errorData.message || 'Something went wrong' };
+    }
+
+    // Success response
+    return { success: 'Password changed successfully!' };
+  } catch (err) {
+    return { error: err.message };
+  }
+}
+
+
+
+export async function verifyResetCodeAction(formData) {
+  const resetCode = formData.get('resetCode');
+
+  try {
+    const response = await fetch('https://exam.elevateegy.com/api/v1/auth/verifyResetCode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resetCode }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { error: errorData.message || 'Failed to verify the code' };
+    }
+
+    return { success: 'Code verified successfully!' };
+  } catch (error) {
+    return { error: error.message };
+  }
+}
+
+
+
+export async function forgotPasswordAction(formData) {
+  const email = formData.get('email');
+
+  try {
+    const response = await fetch('https://exam.elevateegy.com/api/v1/auth/forgotPassword', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { error: errorData.message || 'Failed to send recovery email' };
+    }
+
+    return { success: 'Recovery email sent successfully!' };
+  } catch (error) {
+    return { error: error.message };
+  }
+}

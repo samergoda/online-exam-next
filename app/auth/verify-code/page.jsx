@@ -1,78 +1,33 @@
-'use client';
-import Button from '@/app/_components/Button';
+import { verifyResetCodeAction } from '@/app/_lib/actions';
 import Input from '@/app/_components/Input';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import Button from '@/app/_components/Button';
+import { experimental_useFormStatus as useFormStatus } from 'react';
 
-function Page() {
-  const [resetCode, setResetCode] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const router = useRouter();
-  const handleRecoverPassword = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrorMessage(null);
-    setSuccessMessage(null);
-
-    try {
-      const response = await fetch(
-        'https://exam.elevateegy.com/api/v1/auth/verifyResetCode',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ resetCode }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to verify the code');
-      }
-
-      setSuccessMessage('Code verified successfully!');
-      router.push('/auth/resetPassword');
-    } catch (error) {
-      setErrorMessage(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+function VerifyCodePage() {
+  const { pending, error } = useFormStatus();
 
   return (
     <div>
-      <h2 className='font-bold text-[25px] mb-[31px]'>Verify Code</h2>
-      <form onSubmit={handleRecoverPassword} className='flex flex-col gap-4'>
+      <h2 className="font-bold text-[25px] mb-[31px]">Verify Code</h2>
+      <form action={verifyResetCodeAction} method="post" className="flex flex-col gap-4">
         <Input
-          type='text'
-          placeholder='Enter code'
-          value={resetCode}
-          onChange={(e) => setResetCode(e.target.value)}
+          type="text"
+          name="resetCode"
+          placeholder="Enter code"
+          required
         />
-        {errorMessage && <p className='text-red-500'>{errorMessage}</p>}
-        {successMessage && <p className='text-green-500'>{successMessage}</p>}
-        {/* <button
-          type="submit"
-          disabled={loading}
-          className="text-end bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          {loading ? 'Verifying...' : 'Verify Code'}
-        </button> */}
-
-        <Button>{loading ? 'Verifying...' : 'Verify Code'}</Button>
+        {error && <p className="text-red-500">{error}</p>}
+        <Button type="submit" disabled={pending}>
+          {pending ? 'Verifying...' : 'Verify Code'}
+        </Button>
       </form>
-      <div className='text-end mt-4'>
-        <Link
-          href='/auth/forgetPassword'
-          className='text-blue-500 hover:underline'
-        >
+      <div className="text-end mt-4">
+        <a href="/auth/forgetPassword" className="text-blue-500 hover:underline">
           Recover password
-        </Link>
+        </a>
       </div>
     </div>
   );
 }
 
-export default Page;
+export default VerifyCodePage;

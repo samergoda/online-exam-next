@@ -1,6 +1,6 @@
 import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
-
+let AUTH_PAGES = ['/auth/login', '/auth/signup']; // Pages where authenticated users shouldn't go
 export default async function middleware(request) {
   const token = request.cookies.get('next-auth.session-token');
   const nextToken = await getToken({
@@ -17,10 +17,11 @@ export default async function middleware(request) {
   //   return response;
   // }
   const currentPath = request.nextUrl.pathname;
-  console.log('request.url',request.url);
+  // console.log('request.url',request.url);
+  // console.log('currentPath',currentPath);
   // authnicate
   if (!token) return NextResponse.rewrite(new URL('/auth/login', request.url));
-  if (token && currentPath !== '/') {
+  if (token && AUTH_PAGES.includes(currentPath)) {
     return NextResponse.redirect(new URL('/', request.url));
   }
   //   // role based access level

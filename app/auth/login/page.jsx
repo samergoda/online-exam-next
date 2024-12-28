@@ -3,7 +3,7 @@
 import Button from '@/app/_components/Button';
 import Input from '@/app/_components/Input';
 // import { handleSignin } from '@/app/_lib/action';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

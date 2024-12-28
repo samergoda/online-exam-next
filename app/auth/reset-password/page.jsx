@@ -1,106 +1,44 @@
-'use client';
-import { useState } from 'react';
-import Button from '@/app/_components/Button';
+import { handleResetPassword } from '@/app/_lib/actions';
 import Input from '@/app/_components/Input';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import Button from '@/app/_components/Button';
+import { experimental_useFormStatus as useFormStatus } from 'react';
 
-function Page() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    oldPassword: '',
-    password: '',
-    rePassword: '',
-  });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  }
-
-  async function handleResetPassword(e) {
-    e.preventDefault();
-    const { oldPassword, password, rePassword } = formData;
-
-    // Validation
-    if (
-      password.length < 6 ||
-      !/[A-Z]/.test(password) ||
-      !/\d/.test(password)
-    ) {
-      setError(
-        'Password must be at least 6 characters, include an uppercase letter and a number.'
-      );
-      return;
-    }
-    if (password !== rePassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
-    try {
-      setError('');
-      const response = await fetch(
-        'https://exam.elevateegy.com/api/v1/auth/changePassword',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ oldPassword, password }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Something went wrong');
-      }
-
-      setSuccess('Password changed successfully!');
-      router.push('/auth/login');
-    } catch (err) {
-      setError(err.message);
-    }
-  }
+function ResetPasswordPage() {
+  const { error, pending } = useFormStatus();
 
   return (
     <div>
-      <h2 className='font-bold text-[25px] mb-[31px]'>Reset Password</h2>
-      <div className='flex flex-col gap-4'>
-        <form onSubmit={handleResetPassword} className='flex flex-col gap-4'>
-          <Input
-            type='password'
-            placeholder='Old Password'
-            name='oldPassword'
-            value={formData.oldPassword}
-            onChange={handleChange}
-          />
-          <Input
-            type='password'
-            placeholder='New Password'
-            name='password'
-            value={formData.password}
-            onChange={handleChange}
-          />
-          <Input
-            type='password'
-            placeholder='Confirm Password'
-            name='rePassword'
-            value={formData.rePassword}
-            onChange={handleChange}
-          />
-          <Button type='submit'>Reset Password</Button>
-        </form>
-        {error && <p className='text-red-500 text-sm max-w-[400px]'>{error}</p>}
-        {success && <p className='text-green-500 text-sm'>{success}</p>}
-        <div className='text-end'>
-          <Link href='/auth/forgetPassword'>Recover Password</Link>
-        </div>
+      <h2 className="font-bold text-[25px] mb-[31px]">Reset Password</h2>
+      <form action={handleResetPassword} method="post" className="flex flex-col gap-4">
+        <Input
+          type="password"
+          name="oldPassword"
+          placeholder="Old Password"
+          required
+        />
+        <Input
+          type="password"
+          name="password"
+          placeholder="New Password"
+          required
+        />
+        <Input
+          type="password"
+          name="rePassword"
+          placeholder="Confirm Password"
+          required
+        />
+
+        <Button type="submit">{pending ? 'Loading...' : 'Reset Password'}</Button>
+
+        {/* Display error or success message */}
+        {error && <p className="text-red-500 text-sm max-w-[400px]">{error}</p>}
+      </form>
+      <div className="text-end">
+        <a href="/auth/forgetPassword">Recover Password</a>
       </div>
     </div>
   );
 }
 
-export default Page;
+export default ResetPasswordPage;
