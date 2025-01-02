@@ -2,6 +2,7 @@
 import { getServerSession } from 'next-auth/next';
 import { OPTIONS } from './../api/auth/[...nextauth]/route';
 // import { signIn } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 
 export async function create() {
   const session = await getServerSession(OPTIONS);
@@ -14,16 +15,23 @@ export async function handleSignup(formData) {
   const { firstName, lastName, email, password, rePassword } =
     Object.fromEntries(formData.entries());
 
-  // Validation logic
   if (password !== rePassword) {
     throw new Error('Passwords do not match');
   }
 
   if (password.length < 6 || !/[A-Z]/.test(password) || !/\d/.test(password)) {
-    throw new Error(
-      'Password must be at least 6 characters, include an uppercase letter, and a number.'
-    );
+    throw new Error('Password must be at least 6 characters, include an uppercase letter, and a number.');
   }
+
+  const formDataa = {
+    username: firstName + lastName,
+    firstName: formData.get('firstName'),
+    lastName: formData.get('lastName'),
+    email: formData.get('email'),
+    password: formData.get('password'),
+    rePassword: formData.get('rePassword'),
+    phone: '01094155711',
+  };
 
   try {
     const response = await fetch(
@@ -31,7 +39,7 @@ export async function handleSignup(formData) {
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ firstName, lastName, email, password }),
+        body: JSON.stringify(formDataa),
       }
     );
 
@@ -40,35 +48,39 @@ export async function handleSignup(formData) {
       throw new Error(errorData.message || 'Failed to sign up.');
     }
 
-    // Redirect on success
-    return { redirect: '/auth/signin' };
+    redirect('/auth/signin');
   } catch (error) {
-    // Return error to be displayed
-    return { error: error.message };
+    throw error;
   }
 }
 
-
-
 export async function handleResetPassword(formData) {
-  const { oldPassword, password, rePassword } = Object.fromEntries(formData.entries());
+  const { oldPassword, password, rePassword } = Object.fromEntries(
+    formData.entries()
+  );
 
   // Validation
   if (password.length < 6 || !/[A-Z]/.test(password) || !/\d/.test(password)) {
-    return { error: 'Password must be at least 6 characters, include an uppercase letter, and a number.' };
+    return {
+      error:
+        'Password must be at least 6 characters, include an uppercase letter, and a number.',
+    };
   }
   if (password !== rePassword) {
-    return { error: 'Passwords do not match.' };
+    throw new Error('Passwords do not match');
   }
 
   try {
-    const response = await fetch('https://exam.elevateegy.com/api/v1/auth/changePassword', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ oldPassword, password }),
-    });
+    const response = await fetch(
+      'https://exam.elevateegy.com/api/v1/auth/changePassword',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ oldPassword, password }),
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -82,17 +94,18 @@ export async function handleResetPassword(formData) {
   }
 }
 
-
-
 export async function verifyResetCodeAction(formData) {
   const resetCode = formData.get('resetCode');
 
   try {
-    const response = await fetch('https://exam.elevateegy.com/api/v1/auth/verifyResetCode', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ resetCode }),
-    });
+    const response = await fetch(
+      'https://exam.elevateegy.com/api/v1/auth/verifyResetCode',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resetCode }),
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -105,17 +118,18 @@ export async function verifyResetCodeAction(formData) {
   }
 }
 
-
-
 export async function forgotPasswordAction(formData) {
   const email = formData.get('email');
 
   try {
-    const response = await fetch('https://exam.elevateegy.com/api/v1/auth/forgotPassword', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    });
+    const response = await fetch(
+      'https://exam.elevateegy.com/api/v1/auth/forgotPassword',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();

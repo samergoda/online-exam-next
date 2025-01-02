@@ -1,37 +1,30 @@
-import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
-let AUTH_PAGES = ['/auth/login', '/auth/signup']; // Pages where authenticated users shouldn't go
+
+const AUTH_PAGES = ['/auth/login', '/auth/signup','/auth/forget-password','/auth/verify-code','/auth/reset-password']; 
 export default async function middleware(request) {
   const token = request.cookies.get('next-auth.session-token');
-  const nextToken = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
-  // console.log('token from middleware', nextToken);
-  // if (request.nextUrl.pathname === "/auth/logout") {
-  //   const response = NextResponse.redirect(new URL("/auth/login", request.url));
-  //   response.cookies.delete("connect.sid");
-   
-  //   console.log("Response cookies:", response.cookies.getAll());
-   
-  //   return response;
-  // }
+
   const currentPath = request.nextUrl.pathname;
-  // console.log('request.url',request.url);
-  // console.log('currentPath',currentPath);
-  // authnicate
-  if (!token) return NextResponse.rewrite(new URL('/auth/login', request.url));
+
+  // Redirect authenticated users away from auth pages
   if (token && AUTH_PAGES.includes(currentPath)) {
     return NextResponse.redirect(new URL('/', request.url));
   }
-  //   // role based access level
-  //   if (pathsOfRole?.indexOf(currentUrl) === -1)
-  //     return NextResponse.redirect(new URL("/denied", request.url));
 
+  // Redirect unauthenticated users to login
+  if (!token) {
+    if (AUTH_PAGES.includes(currentPath)) {
+      return NextResponse.rewrite(new URL(currentPath, request.url));
+    }
+    return NextResponse.redirect(new URL('/auth/login', request.url));
+  }
+
+  // Allow the request to continue if authenticated
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
   ],
 };

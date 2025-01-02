@@ -15,7 +15,7 @@ function layout({ children }) {
         <p className='font-normal leading-[40px] text-[18px]'>
           Quidem autem voluptatibus qui quaerat aspernatur architecto natus
         </p>
-        <Image alt='' width='600' height='700' src='/bro.png' />
+        <Image alt='' width='600' height='700' src='' />
       </div>
       <div className='max-w-[50%] m-auto'>
         <nav className='mb-28'>
